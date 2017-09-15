@@ -1,17 +1,23 @@
+package chatapp;
+
 import ballerina.lang.system;
 import ballerina.net.ws;
 
 @ws:configuration {
     basePath: "/ws/hello",
     subProtocols: ["xml", "json"],
-    idleTimeOutSeconds: 5
+    idleTimeOutSeconds: 60
 }
-service<ws> HelloService {
+service<ws> ChatApp {
 
     ws:Connection[] conns = [];
 
+    resource onHandshake(ws:HandshakeConnection con) {
+        system:println("On pre connection");
+    }
+
     resource onOpen(ws:Connection conn) {
-        system:println("New connection");
+        system:println("New connection with sub protocol: " + ws:getNegotiatedSubProtocol(conn));
         conns[conns.length] = conn;
     }
 
@@ -27,8 +33,8 @@ service<ws> HelloService {
     }
 
     resource onClose(ws:Connection conn, ws:CloseFrame frame) {
-        //system:println("Client left: " + ws:getID(conn));
-        //broadcast(conns, "user left");
+        system:println("Client left: " + ws:getID(conn));
+        broadcast(conns, "user left");
         system:println("Close code: " + frame.statusCode);
         system:println("Close reason: " + frame.reason);
     }
