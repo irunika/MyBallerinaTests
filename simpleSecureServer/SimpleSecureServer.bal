@@ -1,4 +1,4 @@
-package simpleserver;
+package simpleSecureServer;
 
 import ballerina.lang.system;
 import ballerina.lang.maps;
@@ -8,9 +8,12 @@ import ballerina.net.ws;
 @ws:configuration {
     basePath: "/ws/simple",
     subProtocols: ["xml", "json"],
-    idleTimeOutSeconds: -1
+    wssPort:5008,
+    keyStoreFile:"${ballerina.home}/bre/security/wso2carbon.jks",
+    keyStorePass:"wso2carbon",
+    certPass:"wso2carbon"
 }
-service<ws> SimpleServer {
+service<ws> SimpleSecureServer {
 
     resource onHandshake(ws:HandshakeConnection conn) {
         system:println("\nConnection ID: " + conn.connectionID);
