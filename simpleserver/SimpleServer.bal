@@ -8,7 +8,8 @@ import ballerina.net.ws;
 @ws:configuration {
     basePath: "/ws/simple",
     subProtocols: ["xml", "json"],
-    idleTimeOutSeconds: -1
+    idleTimeOutSeconds: -1,
+    port:9099
 }
 service<ws> SimpleServer {
 
@@ -31,14 +32,14 @@ service<ws> SimpleServer {
     }
 
 
-    resource onTextMessage (ws:Connection conn, ws:TextFrame frame) {
+    resource onTextMessage (ws:HandshakeConnection conn, ws:TextFrame frame) {
         system:println("\ntext message: " + frame.text + " & is final fragment: " + frame.isFinalFragment);
         ws:pushText(conn, "You said: " + frame.text);
     }
 
     resource onBinaryMessage(ws:Connection conn, ws:BinaryFrame frame) {
         blob b = frame.data;
-        system:println(blobs:toString(b, "UTF-8"));
+        system:println("\nBinary message decoded with UTF-8: " + blobs:toString(b, "UTF-8"));
     }
 
     resource onIdleTimeout(ws:Connection conn) {
