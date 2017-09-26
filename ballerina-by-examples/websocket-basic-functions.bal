@@ -1,17 +1,20 @@
-package simpleserver;
-
 import ballerina.lang.system;
 import ballerina.lang.maps;
 import ballerina.lang.blobs;
 import ballerina.net.ws;
 
 @ws:configuration {
-    basePath: "/ws/simple",
+    basePath: "/functions/ws",
     subProtocols: ["xml", "json"],
-    idleTimeoutInSeconds: -1,
-    port:9099
+    idleTimeoutInSeconds: 30,
+    host: "0.0.0.0",
+    port: 9090,
+    wssPort: 9095,
+    keyStoreFile: "${ballerina.home}/bre/security/wso2carbon.jks",
+    keyStorePass: "wso2carbon",
+    certPass: "wso2carbon"
 }
-service<ws> SimpleServer {
+service<ws> SimpleSecureServer {
 
     resource onHandshake(ws:HandshakeConnection conn) {
         system:println("\nConnection ID: " + conn.connectionID);
@@ -39,7 +42,7 @@ service<ws> SimpleServer {
 
     resource onBinaryMessage(ws:Connection conn, ws:BinaryFrame frame) {
         blob b = frame.data;
-        system:println("\nBinary message decoded with UTF-8: " + blobs:toString(b, "UTF-8"));
+        system:println(blobs:toString(b, "UTF-8"));
         ws:pushBinary(conn, b);
     }
 

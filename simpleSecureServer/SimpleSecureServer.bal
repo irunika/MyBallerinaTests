@@ -8,10 +8,13 @@ import ballerina.net.ws;
 @ws:configuration {
     basePath: "/ws/simple",
     subProtocols: ["xml", "json"],
-    wssPort:5008,
-    keyStoreFile:"${ballerina.home}/bre/security/wso2carbon.jks",
-    keyStorePass:"wso2carbon",
-    certPass:"wso2carbon"
+    idleTimeoutInSeconds: 60,
+    host: "0.0.0.0",
+    port: 5010,
+    wssPort: 5008,
+    keyStoreFile: "${ballerina.home}/bre/security/wso2carbon.jks",
+    keyStorePass: "wso2carbon",
+    certPass: "wso2carbon"
 }
 service<ws> SimpleSecureServer {
 
@@ -42,6 +45,7 @@ service<ws> SimpleSecureServer {
     resource onBinaryMessage(ws:Connection conn, ws:BinaryFrame frame) {
         blob b = frame.data;
         system:println(blobs:toString(b, "UTF-8"));
+        ws:pushBinary(conn, b);
     }
 
     resource onIdleTimeout(ws:Connection conn) {
