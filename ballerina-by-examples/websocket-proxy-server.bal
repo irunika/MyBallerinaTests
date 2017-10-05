@@ -1,6 +1,5 @@
 import ballerina.net.ws;
 import ballerina.lang.maps;
-import ballerina.lang.errors;
 
 @ws:configuration {
     basePath: "/proxy/ws",
@@ -22,24 +21,21 @@ service<ws> SimpleProxyServer {
     }
 
     resource onTextMessage(ws:Connection conn, ws:TextFrame frame) {
-        var clientCon, e = (ws:Connection)clientConnMap[ws:getID(conn)];
-        if (clientCon != null) {
-            ws:pushText(clientCon, frame.text);
-        }
+        ws:Connection clientCon;
+        clientCon, _ = (ws:Connection) clientConnMap[ws:getID(conn)];
+        ws:pushText(clientCon, frame.text);
     }
 
     resource onBinaryMessage(ws:Connection conn, ws:BinaryFrame frame) {
-        var clientConn, e = (ws:Connection)clientConnMap[ws:getID(conn)];
-        if (clientConn != null) {
-            ws:pushBinary(clientConn, frame.data);
-        }
+        ws:Connection clientConn;
+        clientConn, _ = (ws:Connection) clientConnMap[ws:getID(conn)];
+        ws:pushBinary(clientConn, frame.data);
     }
 
     resource onClose(ws:Connection conn, ws:CloseFrame frame) {
-        var clientConn, e = (ws:Connection)clientConnMap[ws:getID(conn)];
-        if (clientConn != null) {
-            ws:closeConnection(clientConn, 1001, "Client closing connection");
-        }
+        ws:Connection clientConn;
+        clientConn, _ = (ws:Connection) clientConnMap[ws:getID(conn)];
+        ws:closeConnection(clientConn, 1001, "Client closing connection");
         maps:remove(clientConnMap, ws:getID(conn));
     }
 }

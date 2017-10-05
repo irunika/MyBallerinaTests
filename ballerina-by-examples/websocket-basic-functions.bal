@@ -8,11 +8,7 @@ import ballerina.net.ws;
     subProtocols: ["xml", "json"],
     idleTimeoutInSeconds: 30,
     host: "0.0.0.0",
-    port: 9090,
-    wssPort: 9095,
-    keyStoreFile: "${ballerina.home}/bre/security/wso2carbon.jks",
-    keyStorePass: "wso2carbon",
-    certPass: "wso2carbon"
+    port: 9090
 }
 service<ws> SimpleSecureServer {
 
@@ -59,12 +55,14 @@ service<ws> SimpleSecureServer {
 
 function printHeaders(map headers) {
     string [] headerKeys = maps:keys(headers);
-    int len = headerKeys.length;
+    int len = lengthof headerKeys;
     int i = 0;
     while (i < len) {
-        var key, e = (string) headerKeys[i];
-        var value, e = (string) headers[key];
-        system:println(key + ": " + value);
+        string key = headerKeys[i];
+        var val, e = (string) headers[key];
+        //string val;
+        //val, _ = (string) headers[key];
+        system:println(key + ": " + val);
         i = i + 1;
     }
 }
